@@ -1,7 +1,6 @@
 package com.alanraju.registration;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -14,7 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.catalina.tribes.group.Response;
 
 /**
  * Servlet implementation class RegistrationServlet
@@ -29,10 +27,39 @@ public class RegistrationServlet extends HttpServlet {
 		String uname = request.getParameter("name");
 		String uemail = request.getParameter("email");
 		String upwd = request.getParameter("pass");
+		String reupwd = request.getParameter("re_pass");
 		String umobile = request.getParameter("contact");
 		RequestDispatcher dispatcher = null;
 		Connection con = null;
 
+		if(uname == null || uname.equals("")) {
+			request.setAttribute("status", "invalidName");
+			dispatcher = request.getRequestDispatcher("registration.jsp");
+			dispatcher.forward(request, response);
+		}
+		if(uemail == null || uemail.equals("")) {
+			request.setAttribute("status", "invalidEmail");
+			dispatcher = request.getRequestDispatcher("registration.jsp");
+			dispatcher.forward(request, response);
+		}
+		if(upwd == null || upwd.equals("")) {
+			request.setAttribute("status", "invalidPassword");
+			dispatcher = request.getRequestDispatcher("registration.jsp");
+			dispatcher.forward(request, response);
+		}else if(!upwd.equals(reupwd)){
+			request.setAttribute("status", "invalidConfirmPassword");
+			dispatcher = request.getRequestDispatcher("registration.jsp");
+			dispatcher.forward(request, response);
+		}
+		if(umobile == null || umobile.equals("")) {
+			request.setAttribute("status", "invalidMobile");
+			dispatcher = request.getRequestDispatcher("registration.jsp");
+			dispatcher.forward(request, response);
+		}else if(umobile.length()>10) {
+			request.setAttribute("status", "invalidMobileLength");
+			dispatcher = request.getRequestDispatcher("registration.jsp");
+			dispatcher.forward(request, response);
+		}
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/signupdb", "root", "root");
